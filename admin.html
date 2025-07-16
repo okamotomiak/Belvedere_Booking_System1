@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Belvedere Admin Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1a73e8 0%, #4285f4 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #e9ecef;
+            margin-bottom: 30px;
+        }
+        
+        .tab {
+            padding: 15px 30px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 500;
+            color: #6c757d;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab.active {
+            color: #1a73e8;
+            border-bottom-color: #1a73e8;
+        }
+        
+        .tab:hover {
+            color: #1a73e8;
+            background: #f8f9fa;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .form-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+        
+        .form-section h3 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #1a73e8;
+            box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.1);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+        }
+        
+        .button {
+            background: #1a73e8;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 500;
+            transition: background 0.3s ease;
+        }
+        
+        .button:hover {
+            background: #1557b0;
+        }
+        
+        .button.success {
+            background: #28a745;
+        }
+        
+        .button.success:hover {
+            background: #218838;
+        }
+        
+        .button.danger {
+            background: #dc3545;
+        }
+        
+        .button.danger:hover {
+            background: #c82333;
+        }
+        
+        .holidays-list {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            padding: 10px;
+        }
+        
+        .holiday-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .holiday-item:last-child {
+            border-bottom: none;
+        }
+        
+        .message {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .email-template {
+            background: white;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .email-template h4 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        
+        .template-variables {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+        }
+        
+        .template-variables strong {
+            color: #495057;
+        }
+        
+        @media (max-width: 768px) {
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .checkbox-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛠️ Belvedere Admin Panel</h1>
+            <p>Manage booking system settings and configurations</p>
+        </div>
+        
+        <div class="content">
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('general')">General Settings</button>
+                <button class="tab" onclick="showTab('holidays')">Holiday Management</button>
+                <button class="tab" onclick="showTab('emails')">Email Templates</button>
+            </div>
+            
+            <div id="messageContainer"></div>
+            
+            <!-- General Settings Tab -->
+            <div id="general" class="tab-content active">
+                <div class="form-section">
+                    <h3>⏰ Operating Hours</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="operatingStart">Start Time:</label>
+                            <input type="time" id="operatingStart" value="08:00">
+                        </div>
+                        <div class="form-group">
+                            <label for="operatingEnd">End Time:</label>
+                            <input type="time" id="operatingEnd" value="21:00">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3>📅 Booking Rules</h3>
+                    <div class="form-group">
+                        <label for="minDaysAdvance">Minimum Days in Advance:</label>
+                        <input type="number" id="minDaysAdvance" value="3" min="0" max="30">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Allowed Weekdays:</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="monday" value="1" checked>
+                                <label for="monday">Monday</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="tuesday" value="2" checked>
+                                <label for="tuesday">Tuesday</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="wednesday" value="3" checked>
+                                <label for="wednesday">Wednesday</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="thursday" value="4" checked>
+                                <label for="thursday">Thursday</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="friday" value="5" checked>
+                                <label for="friday">Friday</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="saturday" value="6" checked>
+                                <label for="saturday">Saturday</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="sunday" value="0" checked>
+                                <label for="sunday">Sunday</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="button success" onclick="saveGeneralSettings()">💾 Save General Settings</button>
+            </div>
+            
+            <!-- Holiday Management Tab -->
+            <div id="holidays" class="tab-content">
+                <div class="form-section">
+                    <h3>🎄 Holiday Management</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="holidayDate">Holiday Date:</label>
+                            <input type="date" id="holidayDate">
+                        </div>
+                        <div class="form-group">
+                            <label for="holidayName">Holiday Name:</label>
+                            <input type="text" id="holidayName" placeholder="e.g., Christmas Day">
+                        </div>
+                    </div>
+                    <button class="button" onclick="addHoliday()">➕ Add Holiday</button>
+                </div>
+                
+                <div class="form-section">
+                    <h3>📋 Current Holidays</h3>
+                    <div id="holidaysList" class="holidays-list">
+                        <!-- Holidays will be loaded here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Email Templates Tab -->
+            <div id="emails" class="tab-content">
+                <div class="email-template">
+                    <h4>📧 Confirmation Email Template</h4>
+                    <div class="template-variables">
+                        <strong>Available variables:</strong> {name}, {spotName}, {date}, {startTime}, {endTime}, {note}, {frequency}
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmationSubject">Subject:</label>
+                        <input type="text" id="confirmationSubject" placeholder="Email subject">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmationBody">Body:</label>
+                        <textarea id="confirmationBody" rows="8" placeholder="Email body with variables"></textarea>
+                    </div>
+                </div>
+                
+                <div class="email-template">
+                    <h4>✅ Approval Email Template</h4>
+                    <div class="template-variables">
+                        <strong>Available variables:</strong> {name}, {spotName}, {date}, {startTime}, {endTime}
+                    </div>
+                    <div class="form-group">
+                        <label for="approvalSubject">Subject:</label>
+                        <input type="text" id="approvalSubject" placeholder="Email subject">
+                    </div>
+                    <div class="form-group">
+                        <label for="approvalBody">Body:</label>
+                        <textarea id="approvalBody" rows="6" placeholder="Email body with variables"></textarea>
+                    </div>
+                </div>
+                
+                <div class="email-template">
+                    <h4>❌ Rejection Email Template</h4>
+                    <div class="template-variables">
+                        <strong>Available variables:</strong> {name}, {spotName}, {date}, {startTime}, {endTime}, {comments}
+                    </div>
+                    <div class="form-group">
+                        <label for="rejectionSubject">Subject:</label>
+                        <input type="text" id="rejectionSubject" placeholder="Email subject">
+                    </div>
+                    <div class="form-group">
+                        <label for="rejectionBody">Body:</label>
+                        <textarea id="rejectionBody" rows="6" placeholder="Email body with variables"></textarea>
+                    </div>
+                </div>
+                
+                <div class="email-template">
+                    <h4>🔔 Manager Notification Template</h4>
+                    <div class="template-variables">
+                        <strong>Available variables:</strong> {name}, {spotName}, {date}, {startTime}, {endTime}, {email}, {phone}, {note}, {frequency}, {timestamp}
+                    </div>
+                    <div class="form-group">
+                        <label for="managerSubject">Subject:</label>
+                        <input type="text" id="managerSubject" placeholder="Email subject">
+                    </div>
+                    <div class="form-group">
+                        <label for="managerBody">Body:</label>
+                        <textarea id="managerBody" rows="8" placeholder="Email body with variables"></textarea>
+                    </div>
+                </div>
+                
+                <button class="button success" onclick="saveEmailTemplates()">💾 Save Email Templates</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentConfig = {};
+        
+        // Initialize admin panel
+        window.onload = function() {
+            loadConfiguration();
+        };
+        
+        /**
+         * Show specific tab
+         */
+        function showTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+        
+        /**
+         * Load current configuration
+         */
+        function loadConfiguration() {
+            google.script.run
+                .withSuccessHandler(displayConfiguration)
+                .withFailureHandler(showError)
+                .getConfig();
+        }
+        
+        /**
+         * Display configuration in the form
+         */
+        function displayConfiguration(config) {
+            currentConfig = config;
+            
+            // Operating hours
+            document.getElementById('operatingStart').value = config.operatingHours.start;
+            document.getElementById('operatingEnd').value = config.operatingHours.end;
+            
+            // Booking rules
+            document.getElementById('minDaysAdvance').value = config.minDaysAdvance;
+            
+            // Allowed weekdays
+            const weekdays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+            weekdays.forEach((day, index) => {
+                const checkbox = document.getElementById(day);
+                checkbox.checked = config.allowedWeekdays.includes(index);
+            });
+            
+            // Email templates
+            if (config.emailTemplates) {
+                document.getElementById('confirmationSubject').value = config.emailTemplates.confirmation.subject;
+                document.getElementById('confirmationBody').value = config.emailTemplates.confirmation.body;
+                
+                document.getElementById('approvalSubject').value = config.emailTemplates.approval.subject;
+                document.getElementById('approvalBody').value = config.emailTemplates.approval.body;
+                
+                document.getElementById('rejectionSubject').value = config.emailTemplates.rejection.subject;
+                document.getElementById('rejectionBody').value = config.emailTemplates.rejection.body;
+                
+                document.getElementById('managerSubject').value = config.emailTemplates.managerNotification.subject;
+                document.getElementById('managerBody').value = config.emailTemplates.managerNotification.body;
+            }
+            
+            // Load holidays
+            displayHolidays(config.holidays || []);
+        }
+        
+        /**
+         * Display holidays list
+         */
+        function displayHolidays(holidays) {
+            const holidaysList = document.getElementById('holidaysList');
+            holidaysList.innerHTML = '';
+            
+            if (holidays.length === 0) {
+                holidaysList.innerHTML = '<p style="text-align: center; color: #6c757d; padding: 20px;">No holidays configured</p>';
+                return;
+            }
+            
+            holidays.forEach((holiday, index) => {
+                const holidayItem = document.createElement('div');
+                holidayItem.className = 'holiday-item';
+                holidayItem.innerHTML = `
+                    <span>${holiday.date} - ${holiday.name || 'Holiday'}</span>
+                    <button class="button danger" onclick="removeHoliday(${index})" style="padding: 5px 10px; font-size: 0.8em;">Remove</button>
+                `;
+                holidaysList.appendChild(holidayItem);
+            });
+        }
+        
+        /**
+         * Save general settings
+         */
+        function saveGeneralSettings() {
+            const newConfig = { ...currentConfig };
+            
+            // Operating hours
+            newConfig.operatingHours = {
+                start: document.getElementById('operatingStart').value,
+                end: document.getElementById('operatingEnd').value
+            };
+            
+            // Booking rules
+            newConfig.minDaysAdvance = parseInt(document.getElementById('minDaysAdvance').value);
+            
+            // Allowed weekdays
+            const allowedWeekdays = [];
+            const weekdays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+            weekdays.forEach((day, index) => {
+                if (document.getElementById(day).checked) {
+                    allowedWeekdays.push(index);
+                }
+            });
+            newConfig.allowedWeekdays = allowedWeekdays;
+            
+            // Save configuration
+            google.script.run
+                .withSuccessHandler(function(response) {
+                    if (response.success) {
+                        showSuccess('General settings saved successfully!');
+                        currentConfig = newConfig;
+                    } else {
+                        showError(response.message);
+                    }
+                })
+                .withFailureHandler(showError)
+                .updateConfig(newConfig);
+        }
+        
+        /**
+         * Add holiday
+         */
+        function addHoliday() {
+            const date = document.getElementById('holidayDate').value;
+            const name = document.getElementById('holidayName').value;
+            
+            if (!date) {
+                showError('Please select a holiday date.');
+                return;
+            }
+            
+            const newConfig = { ...currentConfig };
+            if (!newConfig.holidays) {
+                newConfig.holidays = [];
+            }
+            
+            newConfig.holidays.push({
+                date: date,
+                name: name || 'Holiday'
+            });
+            
+            // Save configuration
+            google.script.run
+                .withSuccessHandler(function(response) {
+                    if (response.success) {
+                        showSuccess('Holiday added successfully!');
+                        currentConfig = newConfig;
+                        displayHolidays(newConfig.holidays);
+                        document.getElementById('holidayDate').value = '';
+                        document.getElementById('holidayName').value = '';
+                    } else {
+                        showError(response.message);
+                    }
+                })
+                .withFailureHandler(showError)
+                .updateConfig(newConfig);
+        }
+        
+        /**
+         * Remove holiday
+         */
+        function removeHoliday(index) {
+            const newConfig = { ...currentConfig };
+            newConfig.holidays.splice(index, 1);
+            
+            google.script.run
+                .withSuccessHandler(function(response) {
+                    if (response.success) {
+                        showSuccess('Holiday removed successfully!');
+                        currentConfig = newConfig;
+                        displayHolidays(newConfig.holidays);
+                    } else {
+                        showError(response.message);
+                    }
+                })
+                .withFailureHandler(showError)
+                .updateConfig(newConfig);
+        }
+        
+        /**
+         * Save email templates
+         */
+        function saveEmailTemplates() {
+            const newConfig = { ...currentConfig };
+            
+            newConfig.emailTemplates = {
+                confirmation: {
+                    subject: document.getElementById('confirmationSubject').value,
+                    body: document.getElementById('confirmationBody').value
+                },
+                approval: {
+                    subject: document.getElementById('approvalSubject').value,
+                    body: document.getElementById('approvalBody').value
+                },
+                rejection: {
+                    subject: document.getElementById('rejectionSubject').value,
+                    body: document.getElementById('rejectionBody').value
+                },
+                managerNotification: {
+                    subject: document.getElementById('managerSubject').value,
+                    body: document.getElementById('managerBody').value
+                }
+            };
+            
+            google.script.run
+                .withSuccessHandler(function(response) {
+                    if (response.success) {
+                        showSuccess('Email templates saved successfully!');
+                        currentConfig = newConfig;
+                    } else {
+                        showError(response.message);
+                    }
+                })
+                .withFailureHandler(showError)
+                .updateConfig(newConfig);
+        }
+        
+        /**
+         * Show success message
+         */
+        function showSuccess(message) {
+            const messageContainer = document.getElementById('messageContainer');
+            messageContainer.innerHTML = `
+                <div class="message success">
+                    <strong>✅ Success!</strong> ${message}
+                </div>
+            `;
+            
+            setTimeout(() => {
+                messageContainer.innerHTML = '';
+            }, 5000);
+        }
+        
+        /**
+         * Show error message
+         */
+        function showError(message) {
+            const messageContainer = document.getElementById('messageContainer');
+            messageContainer.innerHTML = `
+                <div class="message error">
+                    <strong>❌ Error:</strong> ${message}
+                </div>
+            `;
+            
+            setTimeout(() => {
+                messageContainer.innerHTML = '';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
