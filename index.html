@@ -131,24 +131,23 @@
             justify-content: center;
             margin-bottom: 30px;
         }
-        
-        .category-tab {
-            background: #f8f9fa;
-            border: 2px solid #e9ecef;
-            padding: 12px 30px;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-            color: #495057;
-        }
-        
-        .category-tab.active {
+
+        .category-button {
             background: #1a73e8;
-            border-color: #1a73e8;
-            color: white;
-            transform: translateY(-2px);
+            border: none;
+            padding: 14px 40px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 500;
+            color: #fff;
             box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+
+        .category-button:hover {
+            background: #1765cc;
+            transform: translateY(-2px);
         }
         
         /* Spots Grid */
@@ -530,17 +529,19 @@
         
         <!-- Main Content -->
         <div class="content">
-            <div id="spotsSection">
+            <div id="categorySection">
+                <h2 class="section-title">Choose a Category</h2>
+                <div class="categories">
+                    <button class="category-button" onclick="showCategory('Indoor')">
+                        🏢 Indoor Spaces
+                    </button>
+                </div>
+            </div>
+
+            <div id="spotsSection" style="display: none;">
                 <h2 class="section-title">Available Spaces</h2>
                 <p class="section-subtitle">Select from our premium indoor facilities for your events and activities</p>
-                
-                <!-- Categories -->
-                <div class="categories">
-                    <div class="category-tab active" data-category="Indoor">
-                        🏢 Indoor Spaces
-                    </div>
-                </div>
-                
+
                 <!-- Spots Grid -->
                 <div id="spotsGrid" class="spots-grid">
                     <!-- Spots will be loaded here -->
@@ -651,10 +652,10 @@
         // Global variables
         let spots = [];
         let currentConfig = {};
+        let currentCategory = 'Indoor';
         
         // Initialize the application
         window.onload = function() {
-            loadSpots();
             loadConfig();
             setMinDate();
             setupFormListeners();
@@ -668,6 +669,17 @@
                 .withSuccessHandler(displaySpots)
                 .withFailureHandler(handleError)
                 .getSpots();
+        }
+
+        /**
+         * Show spots for selected category
+         */
+        function showCategory(category) {
+            currentCategory = category;
+            document.getElementById('categorySection').style.display = 'none';
+            document.getElementById('spotsSection').style.display = 'block';
+            loadSpots();
+            window.scrollTo(0, 0);
         }
         
         /**
@@ -691,10 +703,10 @@
             const spotsGrid = document.getElementById('spotsGrid');
             spotsGrid.innerHTML = '';
             
-            // Filter spots by category (currently only Indoor)
-            const indoorSpots = spots.filter(spot => spot.category === 'Indoor');
-            
-            indoorSpots.forEach(spot => {
+            // Filter spots by chosen category
+            const filtered = spots.filter(spot => spot.category === currentCategory);
+
+            filtered.forEach(spot => {
                 const spotCard = document.createElement('div');
                 spotCard.className = 'spot-card';
                 spotCard.onclick = () => openBookingForm(spot.name);
