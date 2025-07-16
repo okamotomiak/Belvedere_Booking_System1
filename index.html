@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Belvedere Family Community Center - Booking System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        /* Header Section */
+        .header {
+            background: linear-gradient(135deg, #1a73e8 0%, #4285f4 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="white" opacity="0.1"/><circle cx="80" cy="80" r="2" fill="white" opacity="0.1"/><circle cx="60" cy="30" r="1.5" fill="white" opacity="0.1"/><circle cx="30" cy="70" r="1.5" fill="white" opacity="0.1"/></svg>');
+            background-size: 100px 100px;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header h1 {
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            font-weight: 300;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+        
+        .contact-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .contact-info h3 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+        
+        .contact-details {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95em;
+        }
+        
+        .contact-item .icon {
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1a73e8;
+            font-weight: bold;
+        }
+        
+        /* Main Content */
+        .content {
+            padding: 40px 30px;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.2em;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 300;
+        }
+        
+        .section-subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+        
+        /* Categories */
+        .categories {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .category-tab {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            color: #495057;
+        }
+        
+        .category-tab.active {
+            background: #1a73e8;
+            border-color: #1a73e8;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+        }
+        
+        /* Spots Grid */
+        .spots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .spot-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #e9ecef;
+        }
+        
+        .spot-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .spot-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .spot-card:hover .spot-image {
+            transform: scale(1.05);
+        }
+        
+        .spot-image-placeholder {
+            width: 100%;
+            height: 220px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-size: 1.1em;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .spot-info {
+            padding: 25px;
+        }
+        
+        .spot-name {
+            font-size: 1.4em;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 15px;
+        }
+        
+        .spot-category {
+            display: inline-block;
+            background: #e3f2fd;
+            color: #1565c0;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+        
+        .book-button {
+            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+            color: white;
+            border: none;
+            padding: 12px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .book-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+        
+        /* Booking Form */
+        .booking-form {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin-top: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e9ecef;
+        }
+        
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f8f9fa;
+        }
+        
+        .form-header h2 {
+            color: #212529;
+            font-size: 2em;
+            font-weight: 500;
+        }
+        
+        .close-button {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .close-button:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+            font-size: 1em;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #1a73e8;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .required {
+            color: #dc3545;
+        }
+        
+        /* Booking Summary */
+        .booking-summary {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 25px 0;
+            border-left: 4px solid #1a73e8;
+        }
+        
+        .summary-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 15px;
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding: 5px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+        
+        .summary-label {
+            font-weight: 500;
+            color: #495057;
+        }
+        
+        .summary-value {
+            color: #212529;
+            font-weight: 600;
+        }
+        
+        .submit-button {
+            background: linear-gradient(135deg, #1a73e8 0%, #4285f4 100%);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.2em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(26, 115, 232, 0.3);
+        }
+        
+        .submit-button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* Messages */
+        .message {
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            font-weight: 500;
+            border-left: 4px solid;
+        }
+        
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border-left-color: #28a745;
+        }
+        
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left-color: #dc3545;
+        }
+        
+        .message.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left-color: #17a2b8;
+        }
+        
+        /* Loading */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 30px;
+            color: #6c757d;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #1a73e8;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header {
+                padding: 30px 20px;
+            }
+            
+            .header h1 {
+                font-size: 2.2em;
+            }
+            
+            .contact-details {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .content {
+                padding: 30px 20px;
+            }
+            
+            .spots-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row,
+            .form-row-3 {
+                grid-template-columns: 1fr;
+            }
+            
+            .booking-form {
+                padding: 30px 20px;
+            }
+            
+            .form-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .section-title {
+                font-size: 1.8em;
+            }
+            
+            .spot-card {
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header">
+            <div class="header-content">
+                <h1>Belvedere Family</h1>
+                <p>Community Center Booking System</p>
+                
+                <div class="contact-info">
+                    <h3>Contact Information</h3>
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <div class="icon">📍</div>
+                            <span>723 South Broadway, Tarrytown, NY 10592</span>
+                        </div>
+                        <div class="contact-item">
+                            <div class="icon">📧</div>
+                            <span>adminbelvedere@belvedere.org</span>
+                        </div>
+                        <div class="contact-item">
+                            <div class="icon">📞</div>
+                            <span>Contact for inquiries</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="content">
+            <div id="spotsSection">
+                <h2 class="section-title">Available Spaces</h2>
+                <p class="section-subtitle">Select from our premium indoor facilities for your events and activities</p>
+                
+                <!-- Categories -->
+                <div class="categories">
+                    <div class="category-tab active" data-category="Indoor">
+                        🏢 Indoor Spaces
+                    </div>
+                </div>
+                
+                <!-- Spots Grid -->
+                <div id="spotsGrid" class="spots-grid">
+                    <!-- Spots will be loaded here -->
+                </div>
+            </div>
+            
+            <!-- Booking Form -->
+            <div id="bookingFormSection" class="booking-form">
+                <div class="form-header">
+                    <h2>📅 Reserve Your Space</h2>
+                    <button class="close-button" onclick="closeBookingForm()">✖ Close</button>
+                </div>
+                
+                <div id="messageContainer"></div>
+                
+                <form id="bookingForm">
+                    <div class="form-group">
+                        <label for="spotName">Selected Space:</label>
+                        <input type="text" id="spotName" name="spotName" readonly>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="date">Date: <span class="required">*</span></label>
+                        <input type="date" id="date" name="date" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="startTime">Start Time: <span class="required">*</span></label>
+                            <input type="time" id="startTime" name="startTime" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="endTime">End Time: <span class="required">*</span></label>
+                            <input type="time" id="endTime" name="endTime" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="frequency">Booking Frequency: <span class="required">*</span></label>
+                        <select id="frequency" name="frequency" required>
+                            <option value="">Select frequency...</option>
+                            <option value="One-time">One-time booking</option>
+                            <option value="Weekly">Weekly recurring</option>
+                            <option value="Monthly">Monthly recurring</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="name">Full Name: <span class="required">*</span></label>
+                        <input type="text" id="name" name="name" required placeholder="Enter your full name">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">Email Address: <span class="required">*</span></label>
+                            <input type="email" id="email" name="email" required placeholder="your@email.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone Number: <span class="required">*</span></label>
+                            <input type="tel" id="phone" name="phone" required placeholder="(555) 123-4567">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="note">Additional Notes:</label>
+                        <textarea id="note" name="note" rows="4" placeholder="Any special requirements, setup needs, or additional information..."></textarea>
+                    </div>
+                    
+                    <!-- Booking Summary -->
+                    <div id="bookingSummary" class="booking-summary" style="display: none;">
+                        <div class="summary-title">📋 Booking Summary</div>
+                        <div class="summary-item">
+                            <span class="summary-label">Space:</span>
+                            <span class="summary-value" id="summarySpot"></span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Date:</span>
+                            <span class="summary-value" id="summaryDate"></span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Time:</span>
+                            <span class="summary-value" id="summaryTime"></span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Frequency:</span>
+                            <span class="summary-value" id="summaryFrequency"></span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Contact:</span>
+                            <span class="summary-value" id="summaryContact"></span>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="submit-button" id="submitButton">
+                        🎯 Reserve Space
+                    </button>
+                </form>
+                
+                <div id="loadingSection" class="loading">
+                    <div class="spinner"></div>
+                    <p>Processing your booking request...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let spots = [];
+        let currentConfig = {};
+        
+        // Initialize the application
+        window.onload = function() {
+            loadSpots();
+            loadConfig();
+            setMinDate();
+            setupFormListeners();
+        };
+        
+        /**
+         * Load spots from the backend
+         */
+        function loadSpots() {
+            google.script.run
+                .withSuccessHandler(displaySpots)
+                .withFailureHandler(handleError)
+                .getSpots();
+        }
+        
+        /**
+         * Load system configuration
+         */
+        function loadConfig() {
+            google.script.run
+                .withSuccessHandler(function(config) {
+                    currentConfig = config;
+                    updateFormValidation();
+                })
+                .withFailureHandler(handleError)
+                .getConfig();
+        }
+        
+        /**
+         * Display spots in the grid
+         */
+        function displaySpots(spotsData) {
+            spots = spotsData;
+            const spotsGrid = document.getElementById('spotsGrid');
+            spotsGrid.innerHTML = '';
+            
+            // Filter spots by category (currently only Indoor)
+            const indoorSpots = spots.filter(spot => spot.category === 'Indoor');
+            
+            indoorSpots.forEach(spot => {
+                const spotCard = document.createElement('div');
+                spotCard.className = 'spot-card';
+                spotCard.onclick = () => openBookingForm(spot.name);
+                
+                const imageUrl = convertDriveUrlToDirectLink(spot.imageUrl);
+                
+                spotCard.innerHTML = `
+                    <img src="${imageUrl}" alt="${spot.name}" class="spot-image" 
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="spot-image-placeholder" style="display: none;">
+                        <div>
+                            <div style="font-size: 2em; margin-bottom: 10px;">🏢</div>
+                            <div>${spot.name}</div>
+                            <div style="font-size: 0.9em; margin-top: 5px;">Image Loading...</div>
+                        </div>
+                    </div>
+                    <div class="spot-info">
+                        <div class="spot-category">${spot.category}</div>
+                        <div class="spot-name">${spot.name}</div>
+                        <button class="book-button" onclick="event.stopPropagation(); openBookingForm('${spot.name}')">
+                            Reserve This Space
+                        </button>
+                    </div>
+                `;
+                
+                spotsGrid.appendChild(spotCard);
+            });
+        }
+        
+        /**
+         * Convert Google Drive sharing URL to direct image URL
+         */
+        function convertDriveUrlToDirectLink(driveUrl) {
+            try {
+                const fileId = driveUrl.match(/\/d\/([a-zA-Z0-9-_]+)/)[1];
+                return `https://drive.google.com/uc?id=${fileId}`;
+            } catch (e) {
+                return driveUrl;
+            }
+        }
+        
+        /**
+         * Open booking form for a specific spot
+         */
+        function openBookingForm(spotName) {
+            document.getElementById('spotName').value = spotName;
+            document.getElementById('spotsSection').style.display = 'none';
+            document.getElementById('bookingFormSection').style.display = 'block';
+            
+            // Clear previous messages and reset form
+            document.getElementById('messageContainer').innerHTML = '';
+            document.getElementById('bookingForm').reset();
+            document.getElementById('spotName').value = spotName;
+            document.getElementById('bookingSummary').style.display = 'none';
+            
+            // Update form validation based on current config
+            updateFormValidation();
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+        
+        /**
+         * Close booking form and return to spots view
+         */
+        function closeBookingForm() {
+            document.getElementById('bookingFormSection').style.display = 'none';
+            document.getElementById('spotsSection').style.display = 'block';
+            document.getElementById('messageContainer').innerHTML = '';
+        }
+        
+        /**
+         * Set minimum date based on configuration
+         */
+        function setMinDate() {
+            const today = new Date();
+            const minDays = currentConfig.minDaysAdvance || 3;
+            const minDate = new Date(today.getTime() + (minDays * 24 * 60 * 60 * 1000));
+            const minDateString = minDate.toISOString().split('T')[0];
+            document.getElementById('date').min = minDateString;
+        }
+        
+        /**
+         * Update form validation based on current configuration
+         */
+        function updateFormValidation() {
+            if (currentConfig.operatingHours) {
+                document.getElementById('startTime').min = currentConfig.operatingHours.start;
+                document.getElementById('endTime').min = currentConfig.operatingHours.start;
+                document.getElementById('startTime').max = currentConfig.operatingHours.end;
+                document.getElementById('endTime').max = currentConfig.operatingHours.end;
+            }
+            
+            setMinDate();
+        }
+        
+        /**
+         * Setup form event listeners
+         */
+        function setupFormListeners() {
+            const form = document.getElementById('bookingForm');
+            const inputs = form.querySelectorAll('input, select, textarea');
+            
+            inputs.forEach(input => {
+                input.addEventListener('input', updateBookingSummary);
+                input.addEventListener('change', updateBookingSummary);
+            });
+            
+            form.addEventListener('submit', submitBooking);
+        }
+        
+        /**
+         * Update booking summary display
+         */
+        function updateBookingSummary() {
+            const spotName = document.getElementById('spotName').value;
+            const date = document.getElementById('date').value;
+            const startTime = document.getElementById('startTime').value;
+            const endTime = document.getElementById('endTime').value;
+            const frequency = document.getElementById('frequency').value;
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            
+            if (spotName && date && startTime && endTime && frequency && name && email) {
+                document.getElementById('bookingSummary').style.display = 'block';
+                document.getElementById('summarySpot').textContent = spotName;
+                document.getElementById('summaryDate').textContent = formatDate(date);
+                document.getElementById('summaryTime').textContent = `${formatTime(startTime)} - ${formatTime(endTime)}`;
+                document.getElementById('summaryFrequency').textContent = frequency;
+                document.getElementById('summaryContact').textContent = `${name} (${email})`;
+            } else {
+                document.getElementById('bookingSummary').style.display = 'none';
+            }
+        }
+        
+        /**
+         * Format date for display
+         */
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+        
+        /**
+         * Format time for display
+         */
+        function formatTime(timeString) {
+            const [hours, minutes] = timeString.split(':');
+            const hour = parseInt(hours);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const displayHour = hour % 12 || 12;
+            return `${displayHour}:${minutes} ${ampm}`;
+        }
+        
+        /**
+         * Submit booking form
+         */
+        function submitBooking(event) {
+            event.preventDefault();
+            
+            // Show loading
+            document.getElementById('loadingSection').style.display = 'block';
+            document.getElementById('submitButton').disabled = true;
+            
+            // Clear previous messages
+            document.getElementById('messageContainer').innerHTML = '';
+            
+            // Get form data
+            const formData = {
+                spotName: document.getElementById('spotName').value,
+                date: document.getElementById('date').value,
+                startTime: document.getElementById('startTime').value,
+                endTime: document.getElementById('endTime').value,
+                frequency: document.getElementById('frequency').value,
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                note: document.getElementById('note').value
+            };
+            
+            // Submit to backend
+            google.script.run
+                .withSuccessHandler(handleBookingSuccess)
+                .withFailureHandler(handleBookingError)
+                .submitBooking(formData);
+        }
+        
+        /**
+         * Handle successful booking submission
+         */
+        function handleBookingSuccess(response) {
+            document.getElementById('loadingSection').style.display = 'none';
+            document.getElementById('submitButton').disabled = false;
+            
+            const messageContainer = document.getElementById('messageContainer');
+            
+            if (response.success) {
+                messageContainer.innerHTML = `
+                    <div class="message success">
+                        <strong>✅ Success!</strong> ${response.message}
+                    </div>
+                `;
+                
+                // Reset form
+                document.getElementById('bookingForm').reset();
+                document.getElementById('bookingSummary').style.display = 'none';
+                
+                // Auto-close form after 4 seconds
+                setTimeout(() => {
+                    closeBookingForm();
+                }, 4000);
+                
+            } else {
+                messageContainer.innerHTML = `
+                    <div class="message error">
+                        <strong>❌ Error:</strong> ${response.message}
+                    </div>
+                `;
+            }
+        }
+        
+        /**
+         * Handle booking submission error
+         */
+        function handleBookingError(error) {
+            document.getElementById('loadingSection').style.display = 'none';
+            document.getElementById('submitButton').disabled = false;
+            
+            const messageContainer = document.getElementById('messageContainer');
+            messageContainer.innerHTML = `
+                <div class="message error">
+                    <strong>❌ Error:</strong> An error occurred while processing your booking. Please try again.
+                </div>
+            `;
+            
+            console.error('Booking error:', error);
+        }
+        
+        /**
+         * Handle general errors
+         */
+        function handleError(error) {
+            console.error('Error:', error);
+            const spotsGrid = document.getElementById('spotsGrid');
+            spotsGrid.innerHTML = `
+                <div style="text-align: center; color: #666; grid-column: 1 / -1; padding: 40px;">
+                    <div style="font-size: 3em; margin-bottom: 20px;">⚠️</div>
+                    <h3>Error Loading Spaces</h3>
+                    <p>Please refresh the page or contact support if the problem persists.</p>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
